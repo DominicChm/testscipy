@@ -159,7 +159,7 @@ def alexander_govern_progressive(*args):
 		return (t0 + t1 - t3)**2
 
 	#Using fromiter vs asarray is slightly faster
-	a_test = [np.asarray(A) for A in args]
+	#a_test = [np.asarray(A) for A in args]
 	a = [np.fromiter(A, float) for A in args]
 
 
@@ -171,7 +171,7 @@ def alexander_govern_progressive(*args):
 
 	#stats.sem is slow.
 	S = np.vectorize(standard_error)(a, means, lens)
-	S = np.vectorize(lambda A: stats.sem(A))(a)
+	#S = np.vectorize(lambda A: stats.sem(A))(a)
 
 	w = 1/S**2 / np.sum(1/S**2)
 
@@ -180,7 +180,7 @@ def alexander_govern_progressive(*args):
 	# For small datasets, list comprehension is faster. 
 	# For large sets, vectorization is
 	Z = np.vectorize(calc_z2)(a, var_w, S, means, lens)
-	Z = [calc_z2(a, var_w, S, means, lens) for a, S, means, lens in zip(a, S, means, lens)]
+	#Z = [calc_z2(a, var_w, S, means, lens) for a, S, means, lens in zip(a, S, means, lens)]
 
 
 	Z = np.sum(Z)
@@ -271,8 +271,8 @@ valMult = 500
 sampMin = 100
 sampMax = 1000
 
-colMin = 1000
-colMax = 10000
+colMin = 10000
+colMax = 100000
 
 np.random.seed(1235)
 r = [(np.random.rand(np.random.randint(colMin, colMax)) * valMult).tolist() 
@@ -280,9 +280,10 @@ r = [(np.random.rand(np.random.randint(colMin, colMax)) * valMult).tolist()
 
 @profile
 def run() :
-	#print(alexander_govern_nan_fill(r))
-	print(alexander_govern_progressive(*r))
-	print(AlexanderGovern(*r))
+	
+	for i in range(10):
+		print(alexander_govern_progressive(*r))
+		print(AlexanderGovern(*r))
 	
 
 
