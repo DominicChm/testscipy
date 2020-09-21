@@ -135,7 +135,7 @@ AlexanderGovernResult = namedtuple("AlexanderGovernResult", ("statistic",
                                                              "pvalue"))
 
 @profile
-def alexander_govern_progressive(a):
+def alexander_govern_progressive(*args):
 	
 	#Custom SEM function using cached vars is ~4x faster
 	def standard_error(data, mean, length):
@@ -159,8 +159,8 @@ def alexander_govern_progressive(a):
 		return (t0 + t1 - t3)**2
 
 	#Using fromiter vs asarray is slightly faster
-	#a_test = [np.asarray(A) for A in a]
-	a = [np.fromiter(A, float) for A in a]
+	a_test = [np.asarray(A) for A in args]
+	a = [np.fromiter(A, float) for A in args]
 
 
 	lens = np.asarray([len(A) for A in a])
@@ -171,7 +171,7 @@ def alexander_govern_progressive(a):
 
 	#stats.sem is slow.
 	S = np.vectorize(standard_error)(a, means, lens)
-	#S = np.vectorize(lambda A: stats.sem(A))(a)
+	S = np.vectorize(lambda A: stats.sem(A))(a)
 
 	w = 1/S**2 / np.sum(1/S**2)
 
@@ -271,8 +271,8 @@ valMult = 500
 sampMin = 100
 sampMax = 1000
 
-colMin = 10000
-colMax = 100000
+colMin = 1000
+colMax = 10000
 
 np.random.seed(1235)
 r = [(np.random.rand(np.random.randint(colMin, colMax)) * valMult).tolist() 
@@ -281,8 +281,9 @@ r = [(np.random.rand(np.random.randint(colMin, colMax)) * valMult).tolist()
 @profile
 def run() :
 	#print(alexander_govern_nan_fill(r))
-	print(AlexanderGovern(*a))
-	print(alexander_govern_progressive(a))
+	print(alexander_govern_progressive(*r))
+	print(AlexanderGovern(*r))
+	
 
 
 run()
